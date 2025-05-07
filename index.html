@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>💎 Элитный Джекпот Кликер</title>
+  <style>
+    body {
+      background: #1b1b1b;
+      color: #e3c77c;
+      font-family: 'Georgia', serif;
+      text-align: center;
+      padding: 40px;
+    }
+    .container {
+      background: #2b2b2b;
+      border: 3px solid #e3c77c;
+      border-radius: 20px;
+      padding: 20px;
+      width: 600px;
+      margin: auto;
+    }
+    .display {
+      background: #111;
+      border: 2px solid #e3c77c;
+      padding: 10px;
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+    button {
+      background: #e3c77c;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      color: #1b1b1b;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💎 Элитный Джекпот Кликер</h1>
+    <button onclick="playGame()">Запустить игру</button>
+    <div class="display" id="mainResult">🎰 Ожидание...</div>
+  </div>
+
+  <script>
+    let totalChecks = 0;
+    let totalWins = 0;
+    let jackpotCounts = { small: 0, medium: 0, big: 0 };
+    let rollsSinceJackpot = 0;
+
+    function playGame() {
+      totalChecks++;
+      const chance = 25; // Шанс на успех
+
+      const roll = Math.random() * 100;
+      const isSuccess = roll < chance;
+      let resultMessage = '';
+
+      if (isSuccess) {
+        totalWins++;
+        resultMessage += `✅ Успех! \n`;
+        const jackpot = checkJackpot();
+        if (jackpot) {
+          resultMessage += `💰 ${jackpot.toUpperCase()} джекпот! Вы выиграли!\n`;
+        }
+      } else {
+        resultMessage += `❌ Неудача, попробуйте снова.\n`;
+      }
+
+      updateUI(resultMessage);
+    }
+
+    function checkJackpot() {
+      rollsSinceJackpot++;
+      let chance = 0;
+      let jackpotType = null;
+
+      if (rollsSinceJackpot >= 500) {
+        chance = 0.05;
+        jackpotType = 'big';
+      } else if (rollsSinceJackpot >= 250) {
+        chance = 0.01;
+        jackpotType = 'medium';
+      } else if (rollsSinceJackpot >= 100) {
+        chance = 0.005;
+        jackpotType = 'small';
+      }
+
+      if (jackpotType && Math.random() < chance) {
+        jackpotCounts[jackpotType]++;
+        rollsSinceJackpot = 0;
+        return jackpotType;
+      }
+
+      return null;
+    }
+
+    function updateUI(resultMessage) {
+      document.getElementById('mainResult').innerHTML = `
+        ${resultMessage}
+        <p>Всего проверок: ${totalChecks}</p>
+        <p>Всего выигрышей: ${totalWins}</p>
+        <p>Малых джекпотов: ${jackpotCounts.small} | Средних: ${jackpotCounts.medium} | Больших: ${jackpotCounts.big}</p>
+      `;
+    }
+  </script>
+</body>
+</html>
